@@ -1,6 +1,21 @@
 # Preferences passed to the LLM scorer alongside the CV.
 # These are NOT parsed structurally — the whole file is fed as text to the model.
 
+candidate_location:
+  city: Valparaíso
+  country: Chile
+  timezone: America/Santiago (UTC-3 / UTC-4 in summer)
+  note: >
+    Candidate is based in Chile. Roles that are LATAM-friendly, Americas timezone,
+    or worldwide remote are all viable. International/global remote roles that pay
+    in USD are especially desirable. Do NOT penalize for location unless the role
+    explicitly requires on-site presence in another country.
+
+target_market:
+  - LATAM startups and scaleups (Chile, Argentina, Colombia, Mexico, Peru)
+  - International companies hiring remotely in Americas timezone
+  - US-based companies with LATAM-friendly remote policies
+
 hard_preferences:
   - Must be FULLY REMOTE (worldwide, LATAM, or Americas — not on-site)
   - Seniority: Junior, Semi-Senior, or Mid-level (NOT Senior 5+ years unless GenAI/LLM specific)
@@ -9,10 +24,12 @@ hard_preferences:
   - Salary in USD or strong CLP (>= USD 2000/month gross equivalent)
 
 soft_preferences:
-  - LATAM-based company or LATAM-friendly timezone
+  - LATAM-based company or LATAM/Americas-friendly timezone
   - Fintech, SaaS, edtech, devtools or product startups
   - Mentions building AI products, not training models from scratch
   - Accepts B2 English (not strict C1)
+  - Companies known to hire in Chile (Compara, Fintual, Bsale, Platzi, Globant, etc.)
+  - Roles that value IT/infrastructure background alongside AI skills
 
 hard_disqualifiers:
   - Strict requirement of 5+ years of professional ML engineering

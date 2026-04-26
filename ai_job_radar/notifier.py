@@ -60,6 +60,13 @@ class TelegramNotifier:
         reasons = "\n".join(f"• {_esc(r)}" for r in s.top_reasons_fit[:3]) or "—"
         flags = "\n".join(f"• {_esc(f)}" for f in s.red_flags[:3]) or "—"
 
+        draft_block = ""
+        if s.why_interested_draft:
+            draft_block = (
+                f"\n\n💬 <b>Draft — Why are you interested?</b>\n"
+                f"<i>{_esc(s.why_interested_draft)}</i>"
+            )
+
         return (
             f"{emoji} <b>[{s.score}/100]</b> {_esc(job.title)}\n"
             f"<i>{_esc(job.source)}</i>\n\n"
@@ -70,6 +77,7 @@ class TelegramNotifier:
             f"<b>Why it fits:</b>\n{reasons}\n\n"
             f"<b>Red flags:</b>\n{flags}\n\n"
             f"🔗 {_esc(job.url)}"
+            f"{draft_block}"
         )
 
 

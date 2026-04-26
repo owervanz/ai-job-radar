@@ -56,7 +56,8 @@ Return ONLY this JSON object (no surrounding text):
   "english_required": "<NONE | B2 | C1 | C2 | UNKNOWN>",
   "ai_focus": "<GENAI_LLM | CLASSICAL_ML | MIXED | NOT_AI>",
   "top_reasons_fit": ["<reason 1>", "<reason 2>", "<reason 3>"],
-  "red_flags": ["<flag 1>", "<flag 2>"]
+  "red_flags": ["<flag 1>", "<flag 2>"],
+  "why_interested_draft": "<see instructions below>"
 }}
 
 Scoring guidance:
@@ -65,6 +66,14 @@ Scoring guidance:
 - Senior 5+ yrs ML, recommender systems, or PhD required: 10-30
 - Non-AI roles (pure backend/devops): 30-50 unless great match
 - On-site only or strict C1 English required: cap at 45
+
+why_interested_draft instructions:
+- Write a 3-4 sentence paragraph in English, first person, human and natural tone.
+- No em-dashes (—), no bullet lists, no filler phrases like "I am excited to".
+- Mention ONE specific thing from THIS job posting (tech stack, product, mission, or team detail).
+- Connect it to a real project or skill from the candidate CV (YouTube pipeline, RAG KB, CCNP infra, GenAI APIs, PUC Diploma).
+- Aim for 400-600 characters. Ready to paste into a job application field.
+- If score < 50, set this field to an empty string "".
 """
 
 # ---------------------------------------------------------------------------
@@ -84,6 +93,7 @@ class Scoring:
     top_reasons_fit: list[str]
     red_flags: list[str]
     backend: str = "unknown"          # which backend produced this result
+    why_interested_draft: str = ""    # auto-generated application paragraph
 
     @classmethod
     def from_dict(cls, data: dict, backend: str = "unknown") -> Scoring:
@@ -98,6 +108,7 @@ class Scoring:
             top_reasons_fit=[str(r) for r in (data.get("top_reasons_fit") or [])][:5],
             red_flags=[str(r) for r in (data.get("red_flags") or [])][:5],
             backend=backend,
+            why_interested_draft=str(data.get("why_interested_draft") or "")[:700],
         )
 
 

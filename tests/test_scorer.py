@@ -30,6 +30,7 @@ def test_from_dict_with_full_payload() -> None:
             "ai_focus": "GENAI_LLM",
             "top_reasons_fit": ["Junior fit", "LangChain match", "LATAM remote"],
             "red_flags": ["Some travel required"],
+            "why_interested_draft": "I have been building RAG pipelines at Hapag-Lloyd.",
         },
         backend="groq",
     )
@@ -38,6 +39,7 @@ def test_from_dict_with_full_payload() -> None:
     assert s.remote is True
     assert s.backend == "groq"
     assert s.top_reasons_fit == ["Junior fit", "LangChain match", "LATAM remote"]
+    assert s.why_interested_draft == "I have been building RAG pipelines at Hapag-Lloyd."
 
 
 def test_from_dict_with_missing_fields_uses_defaults() -> None:
@@ -48,6 +50,7 @@ def test_from_dict_with_missing_fields_uses_defaults() -> None:
     assert s.top_reasons_fit == []
     assert s.red_flags == []
     assert s.backend == "unknown"
+    assert s.why_interested_draft == ""
 
 
 def test_from_dict_caps_lists() -> None:
@@ -65,6 +68,12 @@ def test_from_dict_coerces_score_to_int() -> None:
     s = Scoring.from_dict({"score": "75"})
     assert s.score == 75
     assert isinstance(s.score, int)
+
+
+def test_from_dict_caps_why_interested_draft() -> None:
+    long_draft = "x" * 800
+    s = Scoring.from_dict({"score": 80, "why_interested_draft": long_draft})
+    assert len(s.why_interested_draft) == 700
 
 
 # ---------------------------------------------------------------------------
