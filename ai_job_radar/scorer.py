@@ -60,22 +60,45 @@ Return ONLY this JSON object (no surrounding text):
   "why_interested_draft": "<see instructions below>"
 }}
 
-Scoring guidance:
-- Junior/Mid GenAI/LLM roles aligned with candidate stack (Python, RAG, LangChain, APIs): 75-95
-- Mid AI roles requiring skills candidate is still learning (PyTorch, deep ML): 60-75
-- Python/Node backend or API-integration role at an AI/LLM product company: 60-72
-- Senior 5+ yrs ML engineering, recommender systems, or PhD required: 10-30
-- Non-AI roles at non-AI companies (pure backend/devops, no AI product): 30-50
-- On-site only or strict C1+ English hard requirement: cap at 45
-- Role in Americas/LATAM timezone or worldwide remote: bonus +5 if borderline
+═══ HARD CAPS — apply these FIRST before any other scoring ═══
 
-why_interested_draft instructions:
-- Write a 3-4 sentence paragraph in English, first person, human and natural tone.
-- No em-dashes (—), no bullet lists, no filler phrases like "I am excited to".
-- Mention ONE specific thing from THIS job posting (tech stack, product, mission, or team detail).
-- Connect it to a real project or skill from the candidate CV (YouTube pipeline, RAG KB, CCNP infra, GenAI APIs, PUC Diploma).
-- Aim for 400-600 characters. Ready to paste into a job application field.
-- If score < 50, set this field to an empty string "".
+1. NOT REMOTE → cap at 30.
+   Set remote=false and cap score at 30 if the posting does NOT explicitly say
+   "remote", "fully remote", "worldwide", "work from anywhere", "LATAM", or "Americas".
+   Hybrid or "remote-friendly" with required commute days also counts as non-remote → cap 30.
+
+2. WRONG GEOGRAPHY → cap at 25.
+   If the role explicitly requires work authorization or residency in Europe, UK,
+   Middle East, Asia-Pacific, Africa, or any country outside the Americas → cap 25.
+   "Europe only", "must be based in UK", "EMEA" are all disqualifiers.
+
+3. SENIORITY TOO HIGH → cap at 20.
+   Director / VP / Vice President / Head of / C-level / Principal titles where
+   the role clearly requires 8+ years of experience → cap 20.
+
+4. WRONG FIELD → cap at 10.
+   Non-tech roles: Customer support, sales rep, marketing, HR, legal, accounting,
+   content writing, graphic/video design, medical coding → cap 10.
+
+═══ SCORING GUIDANCE (after applying hard caps above) ═══
+
+- Junior/Mid GenAI/LLM roles with Python, RAG, LangChain, Agents, API integration: 75-95
+- Mid AI roles requiring skills still learning (PyTorch, deep ML training): 60-75
+- Python/Node backend or API-integration at an AI/LLM product company: 60-72
+- Data engineering or cloud infra at an AI company (uses candidate's IT background): 55-65
+- Senior 5+ yrs ML engineering or PhD required: 10-30
+- Non-AI roles at non-AI companies (pure CRUD backend, no AI product): 30-50
+- Requires strict C1+ English: subtract 10 from final score
+
+LATAM/Americas bonus: if role is explicitly LATAM-friendly or worldwide remote
+AND the score would otherwise be borderline (within 5 pts of a threshold): +5.
+
+═══ WHY_INTERESTED_DRAFT ═══
+- Write 3-4 sentences, first person, natural English, no em-dashes, no filler.
+- Reference ONE specific detail from THIS job (tech stack, product, mission).
+- Connect to a real item from the CV (RAG pipeline, YouTube project, CCNP, PUC Diploma, Hapag-Lloyd AI work).
+- 400-600 characters, ready to paste into a job application.
+- If score < 55 OR remote=false: return empty string "".
 """
 
 # ---------------------------------------------------------------------------
@@ -257,7 +280,7 @@ def build_scorer(
     gemini_api_key: str,
     gemini_model: str = "gemini-2.0-flash",
     groq_api_key: str | None = None,
-    groq_model: str = "gemma2-9b-it",
+    groq_model: str = "llama-3.3-70b-versatile",
 ) -> MultiBackendScorer:
     """Build a MultiBackendScorer from available API keys.
 
