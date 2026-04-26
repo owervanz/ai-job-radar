@@ -159,14 +159,14 @@ class ScorerBackend(Protocol):
 
 class CerebrasScorer:
     """Cerebras cloud inference. Primary backend — 1M tokens/day free tier,
-    60K tokens/min (10× Groq 70B). Uses gpt-oss-120b by default."""
+    60K tokens/min (10× Groq 70B). Uses qwen-3-235b by default."""
 
     name = "cerebras"
 
     def __init__(
         self,
         api_key: str,
-        model: str = "gpt-oss-120b",
+        model: str = "qwen-3-235b-a22b-instruct-2507",
         max_retries: int = 2,
     ) -> None:
         self._client = Cerebras(api_key=api_key)
@@ -328,7 +328,7 @@ def build_scorer(
     groq_api_key: str | None = None,
     groq_model: str = "llama-3.3-70b-versatile",
     cerebras_api_key: str | None = None,
-    cerebras_model: str = "gpt-oss-120b",
+    cerebras_model: str = "qwen-3-235b-a22b-instruct-2507",
 ) -> MultiBackendScorer:
     """Build a MultiBackendScorer from available API keys.
 
