@@ -1,0 +1,25 @@
+# Preferences passed to the LLM scorer alongside the CV.
+# These are NOT parsed structurally — the whole file is fed as text to the model.
+
+hard_preferences:
+  - Must be FULLY REMOTE (worldwide, LATAM, or Americas — not on-site)
+  - Seniority: Junior, Semi-Senior, or Mid-level (NOT Senior 5+ years unless GenAI/LLM specific)
+  - AI focus: GenAI / LLM / RAG / LangChain / agents / prompt engineering / API integration
+  - Stack overlap with: Python, Next.js, Supabase, Gemini/OpenAI/Anthropic APIs, Vercel
+  - Salary in USD or strong CLP (>= USD 2000/month gross equivalent)
+
+soft_preferences:
+  - LATAM-based company or LATAM-friendly timezone
+  - Fintech, SaaS, edtech, devtools or product startups
+  - Mentions building AI products, not training models from scratch
+  - Accepts B2 English (not strict C1)
+
+hard_disqualifiers:
+  - Strict requirement of 5+ years of professional ML engineering
+  - Requires PhD or research background
+  - Recommender systems / Computer Vision / NLP classical / deep ML as core (not LLM/GenAI)
+  - Requires C1+ English explicitly
+  - On-site only (anywhere physical)
+  - MLOps Senior with SageMaker / Vertex / Kubeflow as hard requirement
+  - Requires deep PyTorch / TensorFlow training experience from scratch
+  - Unpaid, equity-only, or below USD 1500/month
