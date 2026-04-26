@@ -10,7 +10,7 @@ from pathlib import Path
 from ai_job_radar.config import Settings
 from ai_job_radar.db import SeenJobsDB
 from ai_job_radar.notifier import TelegramNotifier
-from ai_job_radar.scorer import GeminiScorer
+from ai_job_radar.scorer import build_scorer
 from ai_job_radar.sources import Job, fetch_all
 
 log = logging.getLogger(__name__)
@@ -40,7 +40,12 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
     preferences = _read_text(settings.preferences_path)
 
     db = SeenJobsDB(settings.db_path)
-    scorer = GeminiScorer(api_key=settings.gemini_api_key, model=settings.gemini_model)
+    scorer = build_scorer(
+        gemini_api_key=settings.gemini_api_key,
+        gemini_model=settings.gemini_model,
+        groq_api_key=settings.groq_api_key,
+        groq_model=settings.groq_model,
+    )
     notifier = TelegramNotifier(settings.telegram_bot_token, settings.telegram_chat_id)
 
     report = RunReport()
@@ -67,8 +72,8 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
             continue
 
         report.scored += 1
-        log.info("  -> score=%d verdict=%s ai=%s",
-                 scoring.score, scoring.verdict, scoring.ai_focus)
+        log.info("  -> score=%d verdict=%s ai=%s backend=%s",
+                 scoring.score, scoring.verdict, scoring.ai_focus, scoring.backend)
 
         sent = False
         if scoring.score >= settings.min_score and not dry_run:
