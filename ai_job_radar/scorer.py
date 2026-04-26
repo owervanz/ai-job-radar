@@ -257,7 +257,7 @@ def build_scorer(
     gemini_api_key: str,
     gemini_model: str = "gemini-2.0-flash",
     groq_api_key: str | None = None,
-    groq_model: str = "llama-3.1-8b-instant",
+    groq_model: str = "gemma2-9b-it",
 ) -> MultiBackendScorer:
     """Build a MultiBackendScorer from available API keys.
 

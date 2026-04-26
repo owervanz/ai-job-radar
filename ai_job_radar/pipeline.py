@@ -85,7 +85,7 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
             log.info("[dry-run] would notify: %s (score=%d)", job.title[:60], scoring.score)
 
         db.mark_seen(job.url, job.title, job.source, scoring.score, sent)
-        time.sleep(4)  # ~15 RPM safety margin for Gemini free tier
+        time.sleep(10)  # respect TPM limits: gemma2-9b-it=15K TPM, gemini=15 RPM
 
     # Do NOT mark overflow jobs as seen — they remain eligible for the next run.
     # This ensures no posting is permanently skipped when a large batch arrives.
