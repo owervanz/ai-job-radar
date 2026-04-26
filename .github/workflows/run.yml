@@ -17,7 +17,6 @@ concurrency:
 
 permissions:
   contents: read
-  actions: write  # required to upload/download artifacts across runs
 
 jobs:
   scan:
@@ -40,20 +39,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Restore seen-jobs DB from previous run
-        uses: actions/download-artifact@v4
+      - name: Restore seen-jobs DB
+        # actions/cache persists across runs automatically.
+        # Key rotates every run so the latest DB is always saved;
+        # restore-keys picks up the most recent previous cache on miss.
+        uses: actions/cache/restore@v4
         with:
-          name: seen-jobs-db
-          path: .
-          github-token: ${{ secrets.GITHUB_TOKEN }}  # needed to fetch across runs
-        continue-on-error: true  # first run has no artifact yet
+          path: seen_jobs.db
+          key: seen-jobs-db-${{ github.run_id }}
+          restore-keys: seen-jobs-db-
 
       - name: Run AI Job Radar
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # optional — enables Groq as primary
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           MIN_SCORE: ${{ vars.MIN_SCORE || '65' }}
           MAX_JOBS_PER_RUN: ${{ vars.MAX_JOBS_PER_RUN || '25' }}
           LOG_LEVEL: INFO
@@ -62,11 +63,9 @@ jobs:
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then DRY_FLAG="--dry-run"; fi
           python -m ai_job_radar $DRY_FLAG
 
-      - name: Upload seen-jobs DB for next run
+      - name: Save seen-jobs DB
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/cache/save@v4
         with:
-          name: seen-jobs-db
           path: seen_jobs.db
-          retention-days: 30
-          overwrite: true
+          key: seen-jobs-db-${{ github.run_id }}
