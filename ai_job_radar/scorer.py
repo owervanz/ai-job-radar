@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 import google.generativeai as genai
+from cerebras.cloud.sdk import Cerebras
 from groq import Groq
 
 from ai_job_radar.sources import Job
@@ -152,7 +153,52 @@ class ScorerBackend(Protocol):
 
 
 # ---------------------------------------------------------------------------
-# Groq backend  (primary — LLaMA 3.3 70B, ~14 400 req/day free)
+# Cerebras backend  (primary — 1M tokens/day, 60K TPM, gpt-oss-120B free)
+# ---------------------------------------------------------------------------
+
+
+class CerebrasScorer:
+    """Cerebras cloud inference. Primary backend — 1M tokens/day free tier,
+    60K tokens/min (10× Groq 70B). Uses gpt-oss-120b by default."""
+
+    name = "cerebras"
+
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "gpt-oss-120b",
+        max_retries: int = 2,
+    ) -> None:
+        self._client = Cerebras(api_key=api_key)
+        self._model = model
+        self._max_retries = max_retries
+
+    def score(self, job: Job, cv: str, preferences: str) -> Scoring | None:
+        prompt = _build_prompt(job, cv, preferences)
+
+        for attempt in range(1, self._max_retries + 2):
+            try:
+                resp = self._client.chat.completions.create(
+                    model=self._model,
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={"type": "json_object"},
+                    temperature=0.2,
+                )
+                data = json.loads(resp.choices[0].message.content)
+                return Scoring.from_dict(data, backend="cerebras")
+            except json.JSONDecodeError as e:
+                log.warning("Cerebras non-JSON for '%s' (attempt %d): %s", job.title[:60], attempt, e)
+            except Exception as e:
+                log.warning("Cerebras error for '%s' (attempt %d): %s", job.title[:60], attempt, e)
+            if attempt <= self._max_retries:
+                time.sleep(2 * attempt)
+
+        log.error("Cerebras gave up on: %s", job.title[:80])
+        return None
+
+
+# ---------------------------------------------------------------------------
+# Groq backend  (fallback-1 — LLaMA 3.3 70B, 100K tokens/day free)
 # ---------------------------------------------------------------------------
 
 
@@ -281,13 +327,21 @@ def build_scorer(
     gemini_model: str = "gemini-2.0-flash",
     groq_api_key: str | None = None,
     groq_model: str = "llama-3.3-70b-versatile",
+    cerebras_api_key: str | None = None,
+    cerebras_model: str = "gpt-oss-120b",
 ) -> MultiBackendScorer:
     """Build a MultiBackendScorer from available API keys.
 
-    If GROQ_API_KEY is provided, Groq is added as primary backend.
-    Gemini is always added (required) as the final fallback.
+    Backend order (first available wins):
+      1. Cerebras  — primary   (1M TPD, 60K TPM, gpt-oss-120b)
+      2. Groq      — fallback  (100K TPD, llama-3.3-70b)
+      3. Gemini    — last resort (1500 req/day)
     """
     backends: list[ScorerBackend] = []
+
+    if cerebras_api_key:
+        backends.append(CerebrasScorer(api_key=cerebras_api_key, model=cerebras_model))
+        log.info("Cerebras backend enabled (model: %s)", cerebras_model)
 
     if groq_api_key:
         backends.append(GroqScorer(api_key=groq_api_key, model=groq_model))

@@ -24,7 +24,8 @@ class Settings:
     gemini_api_key: str
     telegram_bot_token: str
     telegram_chat_id: str
-    groq_api_key: str | None = None          # optional — enables Groq as primary backend
+    cerebras_api_key: str | None = None      # optional — enables Cerebras as primary (1M TPD)
+    groq_api_key: str | None = None          # optional — Groq as fallback (100K TPD)
     gemini_model: str = "gemini-2.0-flash"   # 1 500 RPD / 15 RPM on free tier
     groq_model: str = "llama-3.3-70b-versatile"  # best quality; pre-filter cuts token use ~75%
     min_score: int = 65
@@ -51,6 +52,7 @@ class Settings:
             gemini_api_key=os.environ["GEMINI_API_KEY"],
             telegram_bot_token=os.environ["TELEGRAM_BOT_TOKEN"],
             telegram_chat_id=os.environ["TELEGRAM_CHAT_ID"],
+            cerebras_api_key=os.getenv("CEREBRAS_API_KEY") or None,
             groq_api_key=os.getenv("GROQ_API_KEY") or None,
             gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
             groq_model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),

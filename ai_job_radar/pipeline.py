@@ -101,6 +101,7 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
         gemini_model=settings.gemini_model,
         groq_api_key=settings.groq_api_key,
         groq_model=settings.groq_model,
+        cerebras_api_key=settings.cerebras_api_key,
     )
     notifier = TelegramNotifier(settings.telegram_bot_token, settings.telegram_chat_id)
 
