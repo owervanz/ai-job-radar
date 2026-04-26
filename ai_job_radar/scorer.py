@@ -61,11 +61,13 @@ Return ONLY this JSON object (no surrounding text):
 }}
 
 Scoring guidance:
-- Junior/Mid GenAI/LLM roles aligned with candidate stack: 75-95
-- Mid AI roles requiring skills candidate is still learning (PyTorch): 60-75
-- Senior 5+ yrs ML, recommender systems, or PhD required: 10-30
-- Non-AI roles (pure backend/devops): 30-50 unless great match
-- On-site only or strict C1 English required: cap at 45
+- Junior/Mid GenAI/LLM roles aligned with candidate stack (Python, RAG, LangChain, APIs): 75-95
+- Mid AI roles requiring skills candidate is still learning (PyTorch, deep ML): 60-75
+- Python/Node backend or API-integration role at an AI/LLM product company: 60-72
+- Senior 5+ yrs ML engineering, recommender systems, or PhD required: 10-30
+- Non-AI roles at non-AI companies (pure backend/devops, no AI product): 30-50
+- On-site only or strict C1+ English hard requirement: cap at 45
+- Role in Americas/LATAM timezone or worldwide remote: bonus +5 if borderline
 
 why_interested_draft instructions:
 - Write a 3-4 sentence paragraph in English, first person, human and natural tone.

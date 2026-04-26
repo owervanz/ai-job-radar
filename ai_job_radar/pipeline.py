@@ -87,9 +87,8 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
         db.mark_seen(job.url, job.title, job.source, scoring.score, sent)
         time.sleep(4)  # ~15 RPM safety margin for Gemini free tier
 
-    # Mark the rest as seen so we don't re-process them next run.
-    for job in new_jobs[settings.max_jobs_per_run:]:
-        db.mark_seen(job.url, job.title, job.source, score=0, notified=False)
+    # Do NOT mark overflow jobs as seen — they remain eligible for the next run.
+    # This ensures no posting is permanently skipped when a large batch arrives.
 
     log.info(
         "Run summary: fetched=%d new=%d scored=%d notified=%d failed=%d skipped_cap=%d",

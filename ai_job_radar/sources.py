@@ -65,9 +65,15 @@ class RemoteOKSource:
     name: str = "RemoteOK"
     url: str = "https://remoteok.com/api"
     relevant_tags: frozenset[str] = field(
-        default_factory=lambda: frozenset(
-            {"ai", "ml", "machine learning", "python", "llm", "genai", "langchain"}
-        )
+        default_factory=lambda: frozenset({
+            # Core AI/ML
+            "ai", "ml", "machine learning", "llm", "genai", "langchain",
+            "rag", "agents", "openai", "anthropic", "gpt", "generative",
+            # Candidate stack
+            "python", "fastapi", "node", "nextjs", "next.js", "supabase",
+            # Roles titles that imply AI product work
+            "ai engineer", "ml engineer", "nlp",
+        })
     )
 
     def fetch(self, limit: int = 50) -> list[Job]:
@@ -115,6 +121,7 @@ class RemoteOKSource:
 
 
 DEFAULT_SOURCES: list[RSSSource | RemoteOKSource] = [
+    # --- Getonbrd (LATAM's main remote job board) ---
     RSSSource(
         "Getonbrd · Machine Learning & AI",
         "https://www.getonbrd.com/jobs/category/machine-learning-ai.rss",
@@ -127,6 +134,7 @@ DEFAULT_SOURCES: list[RSSSource | RemoteOKSource] = [
         "Getonbrd · DevOps & SysAdmin",
         "https://www.getonbrd.com/jobs/category/devops-sysadmin.rss",
     ),
+    # --- WeWorkRemotely (strong US/international remote) ---
     RSSSource(
         "WeWorkRemotely · Programming",
         "https://weworkremotely.com/categories/remote-programming-jobs.rss",
@@ -135,6 +143,20 @@ DEFAULT_SOURCES: list[RSSSource | RemoteOKSource] = [
         "WeWorkRemotely · Full-Stack",
         "https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss",
     ),
+    RSSSource(
+        "WeWorkRemotely · Data Science",
+        "https://weworkremotely.com/categories/remote-data-science-jobs.rss",
+    ),
+    # --- Himalayas (AI/ML-heavy remote board, LATAM-friendly) ---
+    RSSSource(
+        "Himalayas · AI & ML",
+        "https://himalayas.app/jobs/rss?categories=machine-learning",
+    ),
+    RSSSource(
+        "Himalayas · Software Engineering",
+        "https://himalayas.app/jobs/rss?categories=software-engineering",
+    ),
+    # --- RemoteOK (API, tag-filtered) ---
     RemoteOKSource(),
 ]
 
