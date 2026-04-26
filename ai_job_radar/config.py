@@ -26,7 +26,7 @@ class Settings:
     telegram_chat_id: str
     groq_api_key: str | None = None          # optional — enables Groq as primary backend
     gemini_model: str = "gemini-2.0-flash"   # 1 500 RPD / 15 RPM on free tier
-    groq_model: str = "llama-3.3-70b-versatile"  # ~14 400 RPD on free tier
+    groq_model: str = "llama-3.1-8b-instant"  # 500K TPD free (vs 100K for 70B)
     min_score: int = 65
     max_jobs_per_run: int = 25
     db_path: Path = PROJECT_ROOT / "seen_jobs.db"

@@ -257,7 +257,7 @@ def build_scorer(
     gemini_api_key: str,
     gemini_model: str = "gemini-2.0-flash",
     groq_api_key: str | None = None,
-    groq_model: str = "llama-3.3-70b-versatile",
+    groq_model: str = "llama-3.1-8b-instant",
 ) -> MultiBackendScorer:
     """Build a MultiBackendScorer from available API keys.
 
@@ -287,5 +287,5 @@ def _build_prompt(job: Job, cv: str, preferences: str) -> str:
         prefs=preferences.strip(),
         job_title=job.title,
         job_source=job.source,
-        job_desc=job.description[:5000],
+        job_desc=job.description[:2500],
     )

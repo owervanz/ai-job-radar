@@ -45,6 +45,7 @@ jobs:
         with:
           name: seen-jobs-db
           path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}  # needed to fetch across runs
         continue-on-error: true  # first run has no artifact yet
 
       - name: Run AI Job Radar

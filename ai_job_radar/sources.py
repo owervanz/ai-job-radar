@@ -52,7 +52,7 @@ class RSSSource:
                     source=self.name,
                     description=_clean_html(
                         entry.get("summary", "") or entry.get("description", "")
-                    )[:6000],
+                    )[:3000],
                     published=entry.get("published", ""),
                 )
             )
@@ -112,7 +112,7 @@ class RemoteOKSource:
                     title=title,
                     url=url,
                     source=self.name,
-                    description=_clean_html(item.get("description", ""))[:6000],
+                    description=_clean_html(item.get("description", ""))[:3000],
                     published=str(item.get("date", "")),
                 )
             )
