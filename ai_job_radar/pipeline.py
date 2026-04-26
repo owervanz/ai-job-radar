@@ -80,7 +80,7 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
             log.info("[dry-run] would notify: %s (score=%d)", job.title[:60], scoring.score)
 
         db.mark_seen(job.url, job.title, job.source, scoring.score, sent)
-        time.sleep(0.4)
+        time.sleep(4)  # ~15 RPM safety margin for Gemini free tier
 
     # Mark the rest as seen so we don't re-process them next run.
     for job in new_jobs[settings.max_jobs_per_run:]:

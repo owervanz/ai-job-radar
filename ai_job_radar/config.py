@@ -24,7 +24,7 @@ class Settings:
     gemini_api_key: str
     telegram_bot_token: str
     telegram_chat_id: str
-    gemini_model: str = "gemini-flash-latest"
+    gemini_model: str = "gemini-2.0-flash"  # 1500 RPD / 15 RPM on free tier
     min_score: int = 70
     max_jobs_per_run: int = 15
     db_path: Path = PROJECT_ROOT / "seen_jobs.db"
@@ -49,7 +49,7 @@ class Settings:
             gemini_api_key=os.environ["GEMINI_API_KEY"],
             telegram_bot_token=os.environ["TELEGRAM_BOT_TOKEN"],
             telegram_chat_id=os.environ["TELEGRAM_CHAT_ID"],
-            gemini_model=os.getenv("GEMINI_MODEL", "gemini-flash-latest"),
+            gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
             min_score=int(os.getenv("MIN_SCORE", "70")),
             max_jobs_per_run=int(os.getenv("MAX_JOBS_PER_RUN", "15")),
             db_path=Path(os.getenv("DB_PATH", str(PROJECT_ROOT / "seen_jobs.db"))),
