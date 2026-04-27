@@ -67,11 +67,20 @@ class TelegramNotifier:
                 f"<i>{_esc(s.why_interested_draft)}</i>"
             )
 
+        contract_emoji = {
+            "FULL_TIME": "🏢",
+            "CONTRACTOR": "📋",
+            "FREELANCE": "🧑‍💻",
+            "PART_TIME": "⏰",
+            "UNKNOWN": "❓",
+        }.get(s.contract_type, "❓")
+
         return (
             f"{emoji} <b>[{s.score}/100]</b> {_esc(job.title)}\n"
             f"<i>{_esc(job.source)}</i>\n\n"
             f"💰 {_esc(s.salary_usd_estimate)}\n"
             f"🎯 Seniority: {_esc(s.seniority_match)}\n"
+            f"{contract_emoji} Contract: {_esc(s.contract_type)}\n"
             f"🧠 AI focus: {_esc(s.ai_focus)}\n"
             f"🇬🇧 English: {_esc(s.english_required)}\n\n"
             f"<b>Why it fits:</b>\n{reasons}\n\n"

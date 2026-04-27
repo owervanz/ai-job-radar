@@ -54,6 +54,7 @@ Return ONLY this JSON object (no surrounding text):
   "seniority_match": "<MATCH | OVERQUALIFIED | UNDERQUALIFIED>",
   "salary_usd_estimate": "<e.g. 'USD 2500-3500/mo' or 'Not specified'>",
   "remote": <true | false | null>,
+  "contract_type": "<FULL_TIME | CONTRACTOR | FREELANCE | PART_TIME | UNKNOWN>",
   "english_required": "<NONE | B2 | C1 | C2 | UNKNOWN>",
   "ai_focus": "<GENAI_LLM | CLASSICAL_ML | MIXED | NOT_AI>",
   "top_reasons_fit": ["<reason 1>", "<reason 2>", "<reason 3>"],
@@ -61,12 +62,33 @@ Return ONLY this JSON object (no surrounding text):
   "why_interested_draft": "<see instructions below>"
 }}
 
+═══ SOURCE CONTEXT — read before applying any cap ═══
+
+WeWorkRemotely, Himalayas, RemoteOK, and Remotive are 100% remote-only job boards.
+If SOURCE matches one of these, treat the role as remote=true by default UNLESS the
+posting explicitly says "on-site", "in-office", "hybrid", or names a required
+physical office location. Do NOT apply the NOT REMOTE cap just because the word
+"remote" is absent from the description — it is implied by the board.
+
+═══ CONTRACT TYPE ═══
+
+Infer contract_type from the posting:
+- FULL_TIME: mentions "full-time", "full time", "permanent", "salary", benefits
+- CONTRACTOR: mentions "contractor", "contract", "B2B", "1099", "independent"
+- FREELANCE: mentions "freelance", "project-based", "per-project"
+- PART_TIME: mentions "part-time", "part time", "20h", "20 hours"
+- UNKNOWN: if unclear or not mentioned
+
 ═══ HARD CAPS — apply these FIRST before any other scoring ═══
 
 1. NOT REMOTE → cap at 30.
    Set remote=false and cap score at 30 if the posting does NOT explicitly say
-   "remote", "fully remote", "worldwide", "work from anywhere", "LATAM", or "Americas".
-   Hybrid or "remote-friendly" with required commute days also counts as non-remote → cap 30.
+   "remote", "fully remote", "worldwide", "work from anywhere", "LATAM", "Americas",
+   "US timezones", "North America timezone", "NA timezone", "EST", "CST", "PST",
+   "UTC-", or "async-first".
+   (US timezone signals are LATAM-compatible: Chile UTC-3/UTC-4 overlaps fully.)
+   Hybrid or "remote-friendly" with required commute days counts as non-remote → cap 30.
+   Exception: if SOURCE is a remote-only board (see SOURCE CONTEXT above), skip this cap.
 
 2. WRONG GEOGRAPHY → cap at 25.
    If the role explicitly requires work authorization or residency in Europe, UK,
@@ -114,6 +136,7 @@ class Scoring:
     seniority_match: str
     salary_usd_estimate: str
     remote: bool | None
+    contract_type: str                # FULL_TIME | CONTRACTOR | FREELANCE | PART_TIME | UNKNOWN
     english_required: str
     ai_focus: str
     top_reasons_fit: list[str]
@@ -129,6 +152,7 @@ class Scoring:
             seniority_match=str(data.get("seniority_match", "UNKNOWN")),
             salary_usd_estimate=str(data.get("salary_usd_estimate") or "Not specified"),
             remote=data.get("remote"),
+            contract_type=str(data.get("contract_type") or "UNKNOWN"),
             english_required=str(data.get("english_required", "UNKNOWN")),
             ai_focus=str(data.get("ai_focus", "NOT_AI")),
             top_reasons_fit=[str(r) for r in (data.get("top_reasons_fit") or [])][:5],

@@ -26,6 +26,7 @@ def test_from_dict_with_full_payload() -> None:
             "seniority_match": "MATCH",
             "salary_usd_estimate": "USD 3000-3500/mo",
             "remote": True,
+            "contract_type": "CONTRACTOR",
             "english_required": "B2",
             "ai_focus": "GENAI_LLM",
             "top_reasons_fit": ["Junior fit", "LangChain match", "LATAM remote"],
@@ -37,6 +38,7 @@ def test_from_dict_with_full_payload() -> None:
     assert s.score == 87
     assert s.verdict == "STRONG_FIT"
     assert s.remote is True
+    assert s.contract_type == "CONTRACTOR"
     assert s.backend == "groq"
     assert s.top_reasons_fit == ["Junior fit", "LangChain match", "LATAM remote"]
     assert s.why_interested_draft == "I have been building RAG pipelines at Hapag-Lloyd."
@@ -47,6 +49,7 @@ def test_from_dict_with_missing_fields_uses_defaults() -> None:
     assert s.score == 30
     assert s.verdict == "NOT_A_FIT"
     assert s.salary_usd_estimate == "Not specified"
+    assert s.contract_type == "UNKNOWN"
     assert s.top_reasons_fit == []
     assert s.red_flags == []
     assert s.backend == "unknown"
