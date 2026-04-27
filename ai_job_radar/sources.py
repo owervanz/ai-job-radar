@@ -61,6 +61,81 @@ class RSSSource:
 
 
 @dataclass(frozen=True)
+class RemotiveSource:
+    """Remotive public JSON API — no auth required.
+
+    Docs: https://remotive.com/api/remote-jobs
+    Useful categories: ai-ml, software-development, devops, data
+    """
+
+    name: str
+    category: str                          # API slug, e.g. "ai-ml"
+    filter_tags: frozenset[str] | None = None   # keep jobs whose tags overlap; None = keep all
+    limit: int = 40
+
+    _BASE = "https://remotive.com/api/remote-jobs"
+
+    def fetch(self) -> list[Job]:
+        log.info("Fetching API: %s (category=%s)", self.name, self.category)
+        try:
+            r = requests.get(
+                self._BASE,
+                params={"category": self.category, "limit": self.limit},
+                headers={"User-Agent": USER_AGENT},
+                timeout=HTTP_TIMEOUT,
+            )
+            r.raise_for_status()
+            data = r.json()
+        except Exception as e:
+            log.error("Remotive fetch failed for %s: %s", self.name, e)
+            return []
+
+        raw_jobs = data.get("jobs", [])
+        jobs: list[Job] = []
+        for item in raw_jobs:
+            # Optional tag-based filtering for broad categories
+            if self.filter_tags:
+                item_tags = {str(t).lower() for t in item.get("tags", [])}
+                title_lower = item.get("title", "").lower()
+                if not (item_tags & self.filter_tags or
+                        any(k in title_lower for k in self.filter_tags)):
+                    continue
+
+            url = item.get("url", "").strip()
+            if not url:
+                continue
+
+            company = item.get("company_name", "").strip()
+            title = item.get("title", "Untitled").strip()
+            if company:
+                title = f"{title} @ {company}"
+
+            # Prepend location hint so the LLM can apply geography hard-caps
+            location = item.get("candidate_required_location", "").strip()
+            salary = item.get("salary", "").strip()
+            desc_header = ""
+            if location:
+                desc_header += f"Location requirement: {location}\n"
+            if salary:
+                desc_header += f"Salary: {salary}\n"
+            if desc_header:
+                desc_header += "\n"
+
+            jobs.append(
+                Job(
+                    title=title,
+                    url=url,
+                    source=self.name,
+                    description=(desc_header + _clean_html(item.get("description", "")))[:3000],
+                    published=str(item.get("publication_date", "")),
+                )
+            )
+
+        log.info("  %s -> %d entries", self.name, len(jobs))
+        return jobs
+
+
+@dataclass(frozen=True)
 class RemoteOKSource:
     name: str = "RemoteOK"
     url: str = "https://remoteok.com/api"
@@ -120,7 +195,18 @@ class RemoteOKSource:
         return jobs
 
 
-DEFAULT_SOURCES: list[RSSSource | RemoteOKSource] = [
+_TECH_AI_TAGS: frozenset[str] = frozenset({
+    # AI / ML
+    "ai", "ml", "machine learning", "llm", "genai", "langchain", "rag",
+    "agents", "openai", "anthropic", "gpt", "generative", "nlp", "ai engineer",
+    "ml engineer", "deep learning", "computer vision",
+    # Candidate stack
+    "python", "fastapi", "node", "next.js", "nextjs", "supabase",
+    # Broad tech signals (software-dev category)
+    "backend", "api", "full-stack", "fullstack",
+})
+
+DEFAULT_SOURCES: list[RSSSource | RemoteOKSource | RemotiveSource] = [
     # --- Getonbrd (LATAM's main remote job board) ---
     RSSSource(
         "Getonbrd · Machine Learning & AI",
@@ -158,10 +244,21 @@ DEFAULT_SOURCES: list[RSSSource | RemoteOKSource] = [
     ),
     # --- RemoteOK (API, tag-filtered) ---
     RemoteOKSource(),
+    # --- Remotive (global remote board with public API, strong AI/ML section) ---
+    RemotiveSource(
+        name="Remotive · AI & ML",
+        category="ai-ml",
+        filter_tags=None,   # all AI/ML jobs — no extra filter needed
+    ),
+    RemotiveSource(
+        name="Remotive · Software Dev",
+        category="software-development",
+        filter_tags=_TECH_AI_TAGS,  # only AI/Python/backend jobs
+    ),
 ]
 
 
-def fetch_all(sources: Iterable[RSSSource | RemoteOKSource] | None = None) -> list[Job]:
+def fetch_all(sources: Iterable[RSSSource | RemoteOKSource | RemotiveSource] | None = None) -> list[Job]:
     """Fetch jobs from every configured source, deduplicated by URL."""
     sources = list(sources) if sources is not None else DEFAULT_SOURCES
     seen: set[str] = set()
