@@ -119,9 +119,30 @@ IT/Infrastructure background bonus (+5):
   cloud infrastructure for ML pipelines, or values networking/systems experience alongside AI:
   add +5 to the score. This is a genuine differentiator for infrastructure-adjacent AI roles.
 
-Salary floor penalty:
-  If salary is EXPLICITLY stated in the posting AND the equivalent is below USD 1 500/month:
-  subtract 15. If salary is not mentioned or unclear: no penalty.
+CONTRACTOR / FREELANCE bonus (+5):
+  The candidate is currently employed full-time at Hapag-Lloyd as Senior IT and wants to keep
+  that job while breaking into AI. Contractor and freelance roles are IDEAL — they let him build
+  real AI experience without career risk. Add +5 for any role where contract_type is CONTRACTOR
+  or FREELANCE. This is a strong structural advantage over full-time candidates.
+
+Salary floor — differentiated by contract type and AI fit:
+  Apply ONLY when salary is EXPLICITLY stated in the posting (not estimated). If not mentioned: no penalty.
+
+  Rule 1 — FULL_TIME with low salary:
+    Salary < USD 2 000/month → subtract 15.
+    Candidate must replace a Senior IT salary at Hapag-Lloyd to justify leaving.
+
+  Rule 2 — CONTRACTOR / FREELANCE with low salary:
+    Salary < USD 800/month → subtract 8.
+    Salary USD 800–1 500/month → no penalty (viable side income while keeping day job).
+
+  Rule 3 — Strong AI fit exception (overrides Rules 1 and 2 partially):
+    If ai_focus = GENAI_LLM AND score before this penalty is ≥ 68:
+      Halve the applicable penalty (round up). Getting into GenAI is the PRIMARY goal —
+      a low-salary GenAI role beats a high-salary non-AI role for career trajectory.
+
+  Rule 4 — Hard floor regardless of fit:
+    Salary < USD 400/month → subtract 25. Not worth the time investment at any level.
 
 LATAM/Americas bonus: if role is explicitly LATAM-friendly or worldwide remote
 AND the score would otherwise be borderline (within 5 pts of a threshold): +5.

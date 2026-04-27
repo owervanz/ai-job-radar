@@ -11,6 +11,17 @@ candidate_location:
     in USD are especially desirable. Do NOT penalize for location unless the role
     explicitly requires on-site presence in another country.
 
+current_employment:
+  company: Hapag-Lloyd
+  role: Senior IT
+  status: >
+    Currently employed full-time. The candidate wants to KEEP this job while breaking
+    into AI. This means:
+    - Contractor and freelance roles are IDEAL — can do both simultaneously.
+    - Full-time AI roles are also interesting but require higher salary to justify leaving.
+    - The #1 priority is getting real AI work experience, even if the first role pays less.
+    - A lower-paying GenAI contractor role beats a higher-paying non-AI role every time.
+
 target_market:
   - LATAM startups and scaleups (Chile, Argentina, Colombia, Mexico, Peru)
   - International companies hiring remotely in Americas timezone
@@ -21,7 +32,8 @@ hard_preferences:
   - Seniority: Junior, Semi-Senior, or Mid-level (NOT Senior 5+ years unless GenAI/LLM specific)
   - AI focus: GenAI / LLM / RAG / LangChain / agents / prompt engineering / API integration
   - Stack overlap with: Python, Next.js, Supabase, Gemini/OpenAI/Anthropic APIs, Vercel
-  - Salary in USD or strong CLP (>= USD 2000/month gross equivalent)
+  - Salary: flexible — getting into AI is priority #1. Even USD 1000-1500/month freelance
+    is acceptable if the role involves real GenAI/LLM work and builds the portfolio.
 
 soft_preferences:
   - LATAM-based company or LATAM/Americas-friendly timezone
@@ -39,4 +51,5 @@ hard_disqualifiers:
   - On-site only (anywhere physical)
   - MLOps Senior with SageMaker / Vertex / Kubeflow as hard requirement
   - Requires deep PyTorch / TensorFlow training experience from scratch
-  - Unpaid, equity-only, or below USD 1500/month
+  - Unpaid or equity-only with no cash component
+  - Below USD 400/month (not worth the time regardless of AI focus)
