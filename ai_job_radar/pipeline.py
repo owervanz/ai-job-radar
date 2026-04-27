@@ -46,6 +46,18 @@ _REJECT_TITLE_RE = re.compile(
     r"|graphic\s+(designer|artist)"
     r"|video\s+(editor|producer)"
     r"|cad\s+(engineer|designer)|mechanical\s+engineer"
+    # UX / UI / product design (not engineering)
+    r"|ux\s+(designer|researcher|writer|lead|director)"
+    r"|ui\s+(designer|artist)"
+    r"|ux\s*/\s*ui|ui\s*/\s*ux"
+    r"|product\s+designer"
+    r"|visual\s+designer"
+    # Agile / project management (non-dev)
+    r"|scrum\s+master"
+    r"|agile\s+coach"
+    r"|product\s+owner"
+    r"|project\s+coordinator"
+    r"|program\s+manager"                 # distinct from Engineering Program Manager
     # Wrong seniority (non-AI executive titles)
     r"|vice\s+president\s+of"
     r"|vp\s+(of\s+)?(engineering|product|sales|marketing|operations|finance)"
@@ -96,6 +108,12 @@ def run_once(settings: Settings, dry_run: bool = False) -> RunReport:
     preferences = _read_text(settings.preferences_path)
 
     db = SeenJobsDB(settings.db_path)
+
+    # Purge stale unnotified entries so refreshed postings get a second look
+    purged = db.purge_old_unnotified(days=30)
+    if purged:
+        log.info("Purged %d stale unnotified entries (older than 30 days)", purged)
+
     scorer = build_scorer(
         gemini_api_key=settings.gemini_api_key,
         gemini_model=settings.gemini_model,

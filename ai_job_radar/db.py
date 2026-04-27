@@ -82,6 +82,23 @@ class SeenJobsDB:
             "top_score": top_score or 0,
         }
 
+    def purge_old_unnotified(self, days: int = 30) -> int:
+        """Delete unnotified entries older than `days` so refreshed postings get re-evaluated.
+
+        Jobs we already notified the user about are kept forever to prevent duplicate alerts.
+        Returns the number of rows deleted.
+        """
+        with self._connect() as con:
+            cur = con.execute(
+                """
+                DELETE FROM seen
+                WHERE notified = 0
+                  AND seen_at < datetime('now', ?)
+                """,
+                (f"-{days} days",),
+            )
+            return cur.rowcount
+
     def reset(self) -> None:
         with self._connect() as con:
             con.execute("DELETE FROM seen")

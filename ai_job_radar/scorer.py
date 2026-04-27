@@ -113,6 +113,16 @@ Infer contract_type from the posting:
 - Non-AI roles at non-AI companies (pure CRUD backend, no AI product): 30-50
 - Requires strict C1+ English: subtract 10 from final score
 
+IT/Infrastructure background bonus (+5):
+  The candidate has 4+ years in IT infrastructure, CCNP certification, and systems/networking
+  experience. If the role involves MLOps, AI platform engineering, DevOps at an AI company,
+  cloud infrastructure for ML pipelines, or values networking/systems experience alongside AI:
+  add +5 to the score. This is a genuine differentiator for infrastructure-adjacent AI roles.
+
+Salary floor penalty:
+  If salary is EXPLICITLY stated in the posting AND the equivalent is below USD 1 500/month:
+  subtract 15. If salary is not mentioned or unclear: no penalty.
+
 LATAM/Americas bonus: if role is explicitly LATAM-friendly or worldwide remote
 AND the score would otherwise be borderline (within 5 pts of a threshold): +5.
 
@@ -121,7 +131,8 @@ AND the score would otherwise be borderline (within 5 pts of a threshold): +5.
 - Reference ONE specific detail from THIS job (tech stack, product, mission).
 - Connect to a real item from the CV (RAG pipeline, YouTube project, CCNP, PUC Diploma, Hapag-Lloyd AI work).
 - 400-600 characters, ready to paste into a job application.
-- If score < 55 OR remote=false: return empty string "".
+- If score < 62 OR remote=false: return empty string "".
+  (62 is the practical floor — only draft for jobs worth applying to.)
 """
 
 # ---------------------------------------------------------------------------
